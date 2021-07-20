@@ -5,6 +5,7 @@
 }
 
 .col {
+  min-height: 100vh;
   max-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
@@ -27,5 +28,27 @@
 }
 
 .bidContainer {
+  color: white;
+  background: #373737;
   padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.BigButton {
+  margin: 0 0 5rem;
+  background: #4ac0c6;
+  font-size: 24px;
+  text-align: center;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border: none;
+  border-radius: 2em;
+  padding: .5em 1em;
+  box-shadow: 0 0 10px 4px #4ac0c6;
+  transition: all .3s ease-in-out;
+  color: white;
 }

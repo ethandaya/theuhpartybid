@@ -105,9 +105,10 @@ export default function Home() {
               major bottle benefits
             </div>
           </div>
-          <h2 style={{ fontFamily: 'Playfair Display', fontWeight: 400, padding: '1rem 2rem', fontSize: 40 }}>
+          <h2 style={{fontFamily: 'Playfair Display', fontWeight: 400, padding: '1rem 2rem', fontSize: 40}}>
             "The world is transforming before our eyes, and irl experiences are proving to be more metamorphic than
-            ever. Now releasing the first PartyBid from p0pb0ttl3z’s new community (dank) app – the (un)official partybid
+            ever. Now releasing the first PartyBid from p0pb0ttl3z’s new community (dank) app – the (un)official
+            partybid
             that comes with major bottle benefits."
           </h2>
         </div>
@@ -119,6 +120,7 @@ export default function Home() {
             id="4008"
           />
         </div>
+        <div style={{height: '100vh', width: 100, background: 'white'}}/>
         <div className={`${styles.col} ${styles.bidContainer}`}>
           <div>
             {
@@ -129,26 +131,33 @@ export default function Home() {
 
           <h1 style={{fontWeight: 'bold'}}>So you wanna party bid huh</h1>
 
-          <h3>gonna party bid on this with us right?</h3>
+          <hr/>
 
-
-          <form onSubmit={handleContribute}>
-            <label style={{fontWeight: 'normal', marginRight: 10}}>How much Eth</label>
+          <form style={{margin: '40px 0'}} onSubmit={handleContribute}>
+            <label
+              style={{fontWeight: 'bold', textTransform: 'uppercase', fontSize: 14}}>How
+              much Eth</label>
             <input type="number" step={0.01} onChange={(e) => setAmount(e.target.value)}/>
+            <br/>
             <button disabled={!amount} type="submit">
-              Contribute {amount}
+              Contribute {amount} ETH
             </button>
           </form>
 
-          <h2>ugh, should we bid now</h2>
-          <p>PS you have to be one of us to hid the big red button</p>
-          <button style={{fontSize: 40, background: 'red', color: 'white', padding: 10}} onClick={handleBid}>yeah mate
+          <hr/>
+
+          <h2>someone click this when its time to bid</h2>
+          <p style={{opacity: 0.5}}>PS you have to be one of us to hid the big blue button</p>
+          <button className={styles.BigButton} onClick={handleBid}>yeah mate
             bid now eh
           </button>
-
-          <h5>I put the errors here</h5>
           <div style={{color: 'red', maxWidth: 400, textAlign: 'center'}}>
             {error}
+          </div>
+
+          <div style={{ marginTop: 'auto'}}>
+            This code is super super dank so use at your own risk <br />
+            <a href="https://github.com/ethandaya/theuhpartybid" target="_blank">https://github.com/ethandaya/theuhpartybid</a>
           </div>
         </div>
       </main>
