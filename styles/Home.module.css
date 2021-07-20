@@ -1,9 +1,31 @@
 
 .main {
-  padding: 5rem 0;
   flex: 1;
   display: flex;
+}
+
+.col {
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  flex: 1 0 33%;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.intro {
+  padding: 2rem 0;
+  background: black;
+  color: white
+}
+
+.nft {
+  padding: 2rem;
+  background: #373737;
+  color: white
+}
+
+.bidContainer {
+  padding: 2rem;
 }
