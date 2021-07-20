@@ -15,6 +15,13 @@ const abi = [
     "stateMutability": "payable",
     "type": "function"
   },
+  {
+    "inputs": [],
+    "name": "bid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
 ]
 
 function eth(num: string) {
@@ -26,6 +33,7 @@ export default function Home() {
   const {active, activate, deactivate, library} = useWeb3React()
   const [ amount, setAmount] = useState<string | undefined>()
   const [ error, setError] = useState<string | undefined>()
+
 
   const handleContribute = useCallback(async(e) => {
     e.preventDefault()
@@ -44,6 +52,30 @@ export default function Home() {
     }
   },
     [active, amount, library])
+
+  const handleBid = useCallback(async(e) => {
+    e.preventDefault()
+    try {
+      setError(undefined)
+      if(!active){
+        throw new Error('no wallet brah')
+      }
+
+      // {
+      //   "inputs": [],
+      //   "name": "bid",
+      //   "outputs": [],
+      //   "stateMutability": "nonpayable",
+      //   "type": "function"
+      // },
+      const PartyBid = new Contract('0xc0469892ad53CBaE9C5A31196866bf0c88d802B5', abi, library.getSigner())
+      await PartyBid.bid()
+
+    } catch (err){
+      setError(err.message || 'Unknown thing ggs ')
+    }
+  },
+    [active, library])
 
   return (
     <>
@@ -75,11 +107,15 @@ export default function Home() {
             <button disabled={!amount} type="submit">
               Contribute {amount}
             </button>
-            <div style={{ color: 'red'}}>
-              {error}
-            </div>
           </form>
 
+          <h4>ugh, should we bid now</h4>
+          <button onClick={handleBid}>yeah mate bid now eh</button>
+
+          <h5>I put the errors here</h5>
+          <div style={{ color: 'red'}}>
+            {error}
+          </div>
         </section>
       </main>
     </>
