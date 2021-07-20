@@ -157,7 +157,7 @@ export default function Home() {
 
           <div style={{ marginTop: 'auto'}}>
             This code is super super dank so use at your own risk <br />
-            <a href="https://github.com/ethandaya/theuhpartybid" target="_blank">https://github.com/ethandaya/theuhpartybid</a>
+            <a rel="noreferrer" href="https://github.com/ethandaya/theuhpartybid" target="_blank">https://github.com/ethandaya/theuhpartybid</a>
           </div>
         </div>
       </main>
