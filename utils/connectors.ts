@@ -4,10 +4,10 @@
  */
 
 import {InjectedConnector} from '@web3-react/injected-connector'
-import {NETWORK_CHAIN_ID, NETWORK_URL} from 'constants/network'
+import {NETWORK_CHAIN_ID} from 'constants/network'
 
-if (!NETWORK_CHAIN_ID || !NETWORK_URL) {
-  throw new Error(`NETWORK_CHAIN_ID && NETWORK_URL must be defined environment variables`)
+if (!NETWORK_CHAIN_ID) {
+  throw new Error(`NETWORK_CHAIN_ID must be defined environment variables`)
 }
 
 
