@@ -105,7 +105,7 @@ export default function Home() {
               major bottle benefits
             </div>
           </div>
-          <h2 style={{ fontFamily: 'Playfair Display', fontWeight: 'light', padding: '1rem 2rem', fontSize: 40 }}>
+          <h2 style={{ fontFamily: 'Playfair Display', fontWeight: '400', padding: '1rem 2rem', fontSize: 40 }}>
             "The world is transforming before our eyes, and irl experiences are proving to be more metamorphic than
             ever. Now releasing the first PartyBid from p0pb0ttl3z’s new community (dank) app – the (un)official partybid
             that comes with major bottle benefits."
