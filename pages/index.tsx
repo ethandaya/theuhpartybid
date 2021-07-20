@@ -110,7 +110,7 @@ export default function Home() {
           </form>
 
           <h4>ugh, should we bid now</h4>
-          <button onClick={handleBid}>yeah mate bid now eh</button>
+          <button style={{ fontSize: 40, background: 'red', color: 'white', padding: 10 }} onClick={handleBid}>yeah mate bid now eh</button>
 
           <h5>I put the errors here</h5>
           <div style={{ color: 'red'}}>
