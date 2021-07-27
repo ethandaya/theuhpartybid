@@ -7,7 +7,8 @@ import {NETWORK_CHAIN_ID} from "constants/network";
 import {Web3Provider} from '@ethersproject/providers'
 
 function getLibrary(provider: any): Web3Provider | undefined {
-  const library = new Web3Provider(provider, NETWORK_CHAIN_ID)
+  console.log(provider);
+  const library = new Web3Provider(provider)//, NETWORK_CHAIN_ID)
   library.pollingInterval = 1000
   return library
 }

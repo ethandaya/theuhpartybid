@@ -12,5 +12,5 @@ if (!NETWORK_CHAIN_ID) {
 
 
 export const injectedConnector = new InjectedConnector({
-  supportedChainIds: [NETWORK_CHAIN_ID],
+  supportedChainIds: [NETWORK_CHAIN_ID, 4],
 })

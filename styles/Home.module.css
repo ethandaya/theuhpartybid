@@ -1,18 +1,16 @@
 
 .main {
-  flex: 1;
-  display: flex;
 }
 
 .col {
-  min-height: 100vh;
+  /* min-height: 100vh;
   max-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
   flex: 1 0 33%;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 
 .intro {
@@ -31,10 +29,20 @@
   color: white;
   background: #373737;
   padding: 2rem;
-  height: 100%;
-  display: flex;
+  /* height: 100%; */
+  /* display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-start; */
+}
+
+.approveContainer {
+  color: white;
+  background: #888;
+  padding: 2rem;
+  /* height: 100%; */
+  /* display: flex;
+  flex-direction: column;
+  align-items: flex-start; */
 }
 
 .BigButton {
