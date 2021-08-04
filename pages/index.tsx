@@ -27,12 +27,12 @@ function eth(num: number) {
   return parseEther(num.toString());
 }
 
-const CheckOwnerComponent = ({ wallet }: { wallet?: string }) => {
+const CheckOwnerComponent = ({ wallet }: { wallet?: string | null }) => {
   const nftData = useContext(NFTDataContext);
   const owner = nftData.nft.data?.nft.owner;
   if (owner?.toLowerCase() === wallet?.toLowerCase()) {
     return (
-      <div style={{ padding: 8, paddingLeft: 16, color: 'green' }}>
+      <div style={{ padding: 8, paddingLeft: 16, color: "green" }}>
         Yay! You own this NFT to auction off.
       </div>
     );
@@ -58,8 +58,9 @@ export default function Home() {
     networkName: string | null;
   }>({ chainId: null, networkName: null });
 
-  const [mediaContractAddress, setMediaContractAddress] =
-    useState<string | undefined>();
+  const [mediaContractAddress, setMediaContractAddress] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     if (library) {
@@ -76,7 +77,6 @@ export default function Home() {
     }
   }, [library]);
 
-
   const [address, setAddress] = useState<null | {
     media: string;
     auctionHouse: string;
@@ -88,10 +88,10 @@ export default function Home() {
     approve,
     mutate,
     revalidate,
-  } = useTokenApproval(mediaContractAddress, address?.auctionHouse)
+  } = useTokenApproval(mediaContractAddress, address?.auctionHouse);
   const { txInProgress, handleTx, txError } = useContractTransaction(10, () => {
     revalidate();
-  })
+  });
 
   useEffect(() => {
     if (network.networkName !== null) {
@@ -224,7 +224,8 @@ export default function Home() {
             </div>
           </h3>
           <h3>
-            step 1: paste a link to the zora or opensea mainnet 721 token you want to auction off
+            step 1: paste a link to the zora or opensea mainnet 721 token you
+            want to auction off
             <input
               type="text"
               value={zoraTokenText}
@@ -236,10 +237,7 @@ export default function Home() {
               <MediaConfiguration
                 networkId={(network.chainId || 1).toString() as any}
               >
-                <NFTPreview
-                  id={zid}
-                  contract={mediaContractAddress}
-                >
+                <NFTPreview id={zid} contract={mediaContractAddress}>
                   <PreviewComponents.MediaThumbnail />
                   <CheckOwnerComponent wallet={account} />
                 </NFTPreview>
@@ -256,9 +254,7 @@ export default function Home() {
               Token is {approved ? "approved" : "not approved"} for auction
               house sales.
               <br />
-              {!approved && (
-                <button onClick={approve}>Approve token</button>
-              )}
+              {!approved && <button onClick={approve}>Approve token</button>}
             </div>
           </div>
         )}
