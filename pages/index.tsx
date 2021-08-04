@@ -5,6 +5,7 @@ import {
   NFTDataContext,
   NFTFullPage,
   NFTPreview,
+  PreviewComponents,
 } from "@zoralabs/nft-components";
 import { useWeb3React } from "@web3-react/core";
 import { injectedConnector } from "utils/connectors";
@@ -19,26 +20,32 @@ import {
 import { parseEther } from "@ethersproject/units";
 import styles from "styles/Home.module.css";
 import { Zora, AuctionHouse, addresses } from "@zoralabs/zdk";
+import { useTokenApproval } from "hooks/useTokenApproval";
+import { useContractTransaction } from "hooks/useContractTransaction";
 
 function eth(num: number) {
   return parseEther(num.toString());
 }
 
-const CheckOwnerComponent = ({ wallet }: { wallet: string }) => {
+const CheckOwnerComponent = ({ wallet }: { wallet?: string }) => {
   const nftData = useContext(NFTDataContext);
   const owner = nftData.nft.data?.nft.owner;
-  if (owner === wallet) {
-    return <span>Yay, you own the token and can auction it</span>;
+  if (owner?.toLowerCase() === wallet?.toLowerCase()) {
+    return (
+      <div style={{ padding: 8, paddingLeft: 16, color: 'green' }}>
+        Yay! You own this NFT to auction off.
+      </div>
+    );
   }
   return (
-    <span style={{ color: "red", fontWeight: "bold" }}>
+    <div style={{ padding: 16, color: "red", fontWeight: "bold" }}>
       You need to own the token before auctioning it off :(
-    </span>
+    </div>
   );
 };
 
 export default function Home() {
-  const { active, activate, deactivate, library } = useWeb3React();
+  const { account, active, activate, deactivate, library } = useWeb3React();
 
   const [error, setError] = useState<string | undefined>();
   const [zid, setZid] = useState("");
@@ -50,7 +57,9 @@ export default function Home() {
     chainId: string | null;
     networkName: string | null;
   }>({ chainId: null, networkName: null });
-  const [isApproved, setIsApproved] = useState<boolean>(false);
+
+  const [mediaContractAddress, setMediaContractAddress] =
+    useState<string | undefined>();
 
   useEffect(() => {
     if (library) {
@@ -67,11 +76,23 @@ export default function Home() {
     }
   }, [library]);
 
+
   const [address, setAddress] = useState<null | {
     media: string;
-    makret: string;
     auctionHouse: string;
   }>(null);
+
+  const {
+    loading: approvalLoading,
+    approved,
+    approve,
+    mutate,
+    revalidate,
+  } = useTokenApproval(mediaContractAddress, address?.auctionHouse)
+  const { txInProgress, handleTx, txError } = useContractTransaction(10, () => {
+    revalidate();
+  })
+
   useEffect(() => {
     if (network.networkName !== null) {
       const auctionHouse = {
@@ -87,51 +108,51 @@ export default function Home() {
     }
   }, [active, library, setAddress, network]);
 
-  const getApproved = useCallback(
-    async (zid: string) => {
-      if (!network.chainId || !zid || !library || !address?.auctionHouse) {
-        return;
-      }
+  // const setApprove = useCallback(async () => {
+  //   if (!library || !address?.auctionHouse) {
+  //     return;
+  //   }
+  //   const zdk = new Zora(await library.getSigner(), network.chainId as any);
+  //   await zdk.setApprovalForAll(address.auctionHouse, true);
+  //   await getApproved(zid);
+  // }, [library, zid, network, getApproved, address]);
 
-      try {
-        const zdk = new Zora(library, network.chainId as any);
-        const owner = await zdk.fetchOwnerOf(zid);
-        // @ts-ignore
-        const result = await zdk.fetchIsApprovedForAll(
-          owner,
-          address.auctionHouse
-        );
-        console.log("updating approved", zid, network.chainId, result);
-        setIsApproved(result);
-      } catch (e) {
-        console.error(e);
-      }
-      // @ts-ignore
-    },
-    [library, zid, network, address && address.auctionHouse]
-  );
-
-  const setApprove = useCallback(async () => {
-    if (!library || !address?.auctionHouse) {
-      return;
-    }
-    const zdk = new Zora(await library.getSigner(), network.chainId as any);
-    await zdk.setApprovalForAll(address.auctionHouse, true);
-    await getApproved(zid);
-  }, [library, zid, network, getApproved, address]);
+  const [zoraTokenText, setZoraTokenText] = useState<string>("");
 
   const updateZoraToken = useCallback(
     (evt: any) => {
-      if (evt.target.value) {
-        console.log({ evt, v: evt.target.value });
-        const id = evt.target.value.match(/\/([0-9]+)\/?$/);
-        if (id && id[1]) {
-          setZid(id[1]);
-          setTimeout(() => getApproved(id[1]), 1000);
+      const { value } = evt.target;
+      if (value) {
+        setZoraTokenText(value);
+
+        if (value.match(/zora\.co/)) {
+          const id = value.match(/\/([0-9]+)\/?$/);
+          if (id && id[1]) {
+            setZid(id[1]);
+            revalidate();
+          }
+        }
+
+        if (value.match(/opensea.io/)) {
+          const uri = value.match(/opensea.io\/assets\/([^\/]+)\/([^\/]+)/);
+          if (!uri) {
+            return;
+          }
+          setMediaContractAddress(uri[1]);
+          setZid(uri[2]);
+        }
+        if (value.match(/rarible.com/)) {
+          const uri = value.match(/rarible.com\/token\/([^:]+):([^?]+)/);
+          if (!uri) {
+            return;
+          }
+          setMediaContractAddress(uri[1]);
+          setZid(uri[2]);
         }
       }
+      revalidate();
     },
-    [setZid, getApproved]
+    [setZid, revalidate]
   );
 
   const setupAuction = useCallback(
@@ -152,7 +173,7 @@ export default function Home() {
           Math.floor(days * 24 * 60 * 60),
           eth(amount),
           curator || "0x0000000000000000000000000000000000000000",
-          curatorFee,
+          curatorFee || 0,
           "0x0000000000000000000000000000000000000000",
           (address as any).media
         );
@@ -203,24 +224,27 @@ export default function Home() {
             </div>
           </h3>
           <h3>
-            step 1: paste a link to the zora token you want to auction off
-            <input type="text" onChange={updateZoraToken} />
+            step 1: paste a link to the zora or opensea mainnet 721 token you want to auction off
+            <input
+              type="text"
+              value={zoraTokenText}
+              onChange={updateZoraToken}
+            />
           </h3>
           {zid && library && (
-            <MediaConfiguration
-              networkId={(network.chainId || 1).toString() as any}
-            >
-              <NFTFullPage
-                config={{
-                  allowOffer: false,
-                }}
-                id={zid}
+            <div>
+              <MediaConfiguration
+                networkId={(network.chainId || 1).toString() as any}
               >
-                <CheckOwnerComponent wallet={"0x00"} />
-                <FullComponents.MediaFull />
-                <FullComponents.MediaInfo />
-              </NFTFullPage>
-            </MediaConfiguration>
+                <NFTPreview
+                  id={zid}
+                  contract={mediaContractAddress}
+                >
+                  <PreviewComponents.MediaThumbnail />
+                  <CheckOwnerComponent wallet={account} />
+                </NFTPreview>
+              </MediaConfiguration>
+            </div>
           )}
         </div>
         {library && zid && (
@@ -229,16 +253,16 @@ export default function Home() {
               step 2: approve token for auction house
             </h1>
             <div>
-              Token is {isApproved ? "approved" : "not approved"} for auction
+              Token is {approved ? "approved" : "not approved"} for auction
               house sales.
               <br />
-              {!isApproved && (
-                <button onClick={setApprove}>Approve token</button>
+              {!approved && (
+                <button onClick={approve}>Approve token</button>
               )}
             </div>
           </div>
         )}
-        {library && zid && isApproved && (
+        {library && zid && approved && (
           <div className={`${styles.bidContainer}`}>
             <h1 style={{ fontWeight: "bold" }}>step 3: auction it off!</h1>
 
@@ -279,9 +303,9 @@ export default function Home() {
               <br />
               {curator && (
                 <div>
-                  curator fee: (optional)
+                  curator fee percentage (1-100):
                   <input
-                    type="text"
+                    type="number"
                     disabled={!curator}
                     step={1}
                     max={100}
@@ -303,7 +327,7 @@ export default function Home() {
               {error}
             </div>
 
-            <div style={{ marginTop: "auto" }}>
+            <div style={{ marginTop: "40px" }}>
               proof of concept.
               <br />
               please verify txns and report bugs on github
