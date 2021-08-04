@@ -20,6 +20,7 @@ export function useTokenApproval(contractAddress?: string, spender?: string) {
   )
 
   function approve(): Promise<ContractTransaction> {
+    console.log({contract, spender, msg:'at approve'})
     if (!contract || !spender) {
       throw new Error('No connected contract instance || spender address')
     }

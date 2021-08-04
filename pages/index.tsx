@@ -129,7 +129,7 @@ export default function Home() {
           const id = value.match(/\/([0-9]+)\/?$/);
           if (id && id[1]) {
             setZid(id[1]);
-            revalidate();
+            setMediaContractAddress(address?.media)
           }
         }
 
@@ -152,7 +152,7 @@ export default function Home() {
       }
       revalidate();
     },
-    [setZid, revalidate]
+    [setZid, revalidate, address]
   );
 
   const setupAuction = useCallback(
