@@ -175,7 +175,7 @@ export default function Home() {
           curator || "0x0000000000000000000000000000000000000000",
           curatorFee || 0,
           "0x0000000000000000000000000000000000000000",
-          (address as any).media
+          mediaContractAddress
         );
       } catch (err) {
         setError(err.message || "Unknown thing ggs ");
